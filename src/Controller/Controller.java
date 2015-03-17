@@ -1,8 +1,12 @@
 package Controller;
 
 import Domain.PuzzleState;
+import Domain.MovablePuzzleState;
+import Domain.PuzzleStateNoBlankPosition;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -10,16 +14,31 @@ import java.util.Queue;
  */
 public class Controller {
 
-    Queue<PuzzleState> queue;
+    Queue<MovablePuzzleState> queue;
+    List<PuzzleState> blackList;
 
     public Controller() {
-        queue = new LinkedList<PuzzleState>();
+        queue = new LinkedList<MovablePuzzleState>();
+        blackList = new ArrayList<PuzzleState>();
     }
 
-    public PuzzleState findSolution(PuzzleState initialState) {
-
+    public MovablePuzzleState findSolution(MovablePuzzleState initialState) throws PuzzleStateNoBlankPosition, ControllerUnsolvableState {
         queue.add(initialState);
 
-        return null;
+        while (true) {
+            if (queue.isEmpty()) {
+                throw new ControllerUnsolvableState("There are no solutions for this configuration");
+            }
+            MovablePuzzleState current = queue.remove();
+            if (current.isSolution()) {
+                return current;
+            }
+            blackList.add(current);
+            List<MovablePuzzleState> expanded = current.expandState();
+            for (MovablePuzzleState expandedState : expanded) {
+                if (!blackList.contains(expandedState))
+                    queue.add(expandedState);
+            }
+        }
     }
 }

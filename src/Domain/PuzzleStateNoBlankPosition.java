@@ -1,7 +1,7 @@
 package Domain;
 
 /**
- * Created by Alexandru Pele on 3/16/2015.
+ * Created by Alexandru Pele on 3/17/2015.
  */
 public class PuzzleStateNoBlankPosition extends Exception {
     public PuzzleStateNoBlankPosition() {

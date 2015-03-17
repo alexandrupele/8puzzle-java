@@ -1,8 +1,10 @@
 package UI;
 
+import java.util.List;
 import java.util.Scanner;
-import Controller.Controller;
-import Domain.PuzzleState;
+import Controller.*;
+import Domain.MovablePuzzleState;
+import Domain.PuzzleStateNoBlankPosition;
 
 /**
  * Created by Alexandru Pele on 3/16/2015.
@@ -15,7 +17,7 @@ public class Console {
         this.ctrl = ctrl;
     }
 
-    private PuzzleState readInitialState() {
+    private MovablePuzzleState readInitialState() {
         Scanner scan = new Scanner(System.in);
 
         System.out.print("Enter puzzle order: ");
@@ -49,18 +51,26 @@ public class Console {
         }
 
         scan.close();
-        return new PuzzleState(arrayPuzzle);
+        return new MovablePuzzleState(arrayPuzzle);
     }
 
     public void run() {
-        PuzzleState initialState = readInitialState(), solution;
+        MovablePuzzleState initialState = readInitialState();
 
-        if (initialState == null) {
-            return;
+        try {
+            MovablePuzzleState sol = ctrl.findSolution(initialState);
+            System.out.println(sol);
+            System.out.println("Found solution: ");
+            List<MovablePuzzleState.Step> steps = sol.getSteps();
+            System.out.println("Need " + steps.size() + " moves...");
+            for (MovablePuzzleState.Step step : steps)
+                System.out.print(step.name() + " ");
+
+        } catch (PuzzleStateNoBlankPosition e) {
+            System.out.println(e.getMessage());
+        } catch (ControllerUnsolvableState e) {
+            System.out.println(e.getMessage());
         }
 
-        solution = ctrl.findSolution(initialState);
-
-        System.out.println(solution);
     }
 }
