@@ -16,7 +16,7 @@ import java.util.List;
 public class MovablePuzzleState extends PuzzleState {
 
     private int order;
-    public enum Step {UP, DOWN, LEFT, RIGHT};
+    public static enum Step {UP, DOWN, LEFT, RIGHT};
     private List<Step> steps;
 
     public MovablePuzzleState(int[][] state) {
@@ -39,8 +39,10 @@ public class MovablePuzzleState extends PuzzleState {
                 state[i][j] = other.state[i][j];
 
         steps = new ArrayList<Step>();
-        for(Step step : other.steps)
+        for(Step step : other.steps) {
+//            System.out.print(step.name() + " ");
             steps.add(step);
+        }
     }
 
     /**
@@ -68,7 +70,7 @@ public class MovablePuzzleState extends PuzzleState {
         cp.state[pos[0]][pos[1]] = cp.state[pos[0] - 1][pos[1]];
         cp.state[pos[0] - 1][pos[1]] = 0;
 
-        steps.add(Step.UP);
+        cp.steps.add(Step.UP);
         return cp;
     }
 
@@ -83,7 +85,7 @@ public class MovablePuzzleState extends PuzzleState {
         cp.state[pos[0]][pos[1]] = cp.state[pos[0] + 1][pos[1]];
         cp.state[pos[0] + 1][pos[1]] = 0;
 
-        steps.add(Step.DOWN);
+        cp.steps.add(Step.DOWN);
         return cp;
     }
 
@@ -98,7 +100,7 @@ public class MovablePuzzleState extends PuzzleState {
         cp.state[pos[0]][pos[1]] = cp.state[pos[0]][pos[1] - 1];
         cp.state[pos[0]][pos[1] - 1] = 0;
 
-        steps.add(Step.LEFT);
+        cp.steps.add(Step.LEFT);
         return cp;
     }
 
@@ -114,7 +116,7 @@ public class MovablePuzzleState extends PuzzleState {
         cp.state[pos[0]][pos[1] + 1] = 0;
 
 
-        steps.add(Step.RIGHT);
+        cp.steps.add(Step.RIGHT);
         return cp;
     }
 

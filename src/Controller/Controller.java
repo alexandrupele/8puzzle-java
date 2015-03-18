@@ -34,6 +34,11 @@ public class Controller {
                 return current;
             }
             blackList.add(current);
+            if(blackList.size() % 2000 == 0) {
+                // Logging
+                System.out.println("Visited: " + blackList.size());
+                System.out.println("To be visited: " + queue.size());
+            }
             List<MovablePuzzleState> expanded = current.expandState();
             for (MovablePuzzleState expandedState : expanded) {
                 if (!blackList.contains(expandedState))
