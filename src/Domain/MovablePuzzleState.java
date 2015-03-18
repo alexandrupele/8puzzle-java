@@ -7,6 +7,12 @@ import java.util.List;
 /**
  * Created by Alexandru Pele on 3/16/2015.
  */
+
+/**
+ * This is a specialized puzzle state
+ * The subclass implements a copy constructor for
+ * easy expanding and also state altering methods
+ */
 public class MovablePuzzleState extends PuzzleState {
 
     private int order;
@@ -16,34 +22,39 @@ public class MovablePuzzleState extends PuzzleState {
     public MovablePuzzleState(int[][] state) {
         super(state);
         order = state.length;
-
         steps = new ArrayList<Step>();
     }
 
-    // Copy Constructor
+    /**
+     * Performs a deep copy of reference type members
+     * thus providing isolation between expanded states
+     * @param other the state that will be expanded
+     */
     public MovablePuzzleState(MovablePuzzleState other) {
-        super();
         order = other.order;
-
-        // Perform a deep copy of ref. types
+        // Alloc new memory for non-primitive types
         state = new int[order][order];
         for (int i = 0; i < order; i++)
             for (int j = 0; j < order; j++)
                 state[i][j] = other.state[i][j];
 
-        steps = other.steps;
-//        steps = new ArrayList<Step>();
-//        for(Step s : other.steps)
-//            steps.add(s.);
+        steps = new ArrayList<Step>();
+        for(Step step : other.steps)
+            steps.add(step);
     }
 
+    /**
+     * @precondition the state contains an empty slot
+     * @return array of integers representing the position of the empty slot
+     * @throws PuzzleStateNoBlankPosition
+     */
     private int[] getBlankPosition() throws PuzzleStateNoBlankPosition {
         for (int i = 0; i < order; i++)
             for (int j = 0; j < order; j++)
                 if (state[i][j] == 0) {
                     return new int[] {i, j};
                 }
-        throw new PuzzleStateNoBlankPosition("No blank position found");
+        throw new PuzzleStateNoBlankPosition("Empty slot not found");
     }
 
     public MovablePuzzleState moveUp() throws PuzzleStateNoBlankPosition, PuzzleStateInvalidMove {
@@ -109,8 +120,8 @@ public class MovablePuzzleState extends PuzzleState {
 
     public List<MovablePuzzleState> expandState() throws PuzzleStateNoBlankPosition {
         List<MovablePuzzleState> derivedStates = new LinkedList<MovablePuzzleState>();
-        try {
 
+        try {
             derivedStates.add(moveUp());
         } catch (PuzzleStateInvalidMove e) { }
 
@@ -150,8 +161,9 @@ public class MovablePuzzleState extends PuzzleState {
                     prev = state[i][j];
                 else {
                     if (state[i][j] - prev != 1) {
-                        if (modified)
+                        if (modified) {
                             state[maxPos][maxPos] = 0;
+                        }
                         return false;
                     }
                     prev = state[i][j];
@@ -159,8 +171,9 @@ public class MovablePuzzleState extends PuzzleState {
             }
         }
 
-        if (modified)
+        if (modified) {
             state[maxPos][maxPos] = 0;
+        }
         return true;
     }
 

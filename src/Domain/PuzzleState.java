@@ -13,11 +13,11 @@ public class PuzzleState {
 
     @Override
     public boolean equals(Object obj) {
-        if (getClass() != obj.getClass())
+        if (getClass() != obj.getClass()) {
             return false;
+        }
 
         PuzzleState other = (PuzzleState)obj;
-
         for (int i = 0; i < state.length; i++)
             for (int j = 0; j < state.length; j++)
                 if (state[i][j] != other.state[i][j])

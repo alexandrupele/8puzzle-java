@@ -22,7 +22,7 @@ public class Controller {
         blackList = new ArrayList<PuzzleState>();
     }
 
-    public MovablePuzzleState findSolution(MovablePuzzleState initialState) throws PuzzleStateNoBlankPosition, ControllerUnsolvableState {
+    public MovablePuzzleState getSolution(MovablePuzzleState initialState) throws PuzzleStateNoBlankPosition, ControllerUnsolvableState {
         queue.add(initialState);
 
         while (true) {

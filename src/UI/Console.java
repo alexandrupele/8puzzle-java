@@ -58,7 +58,7 @@ public class Console {
         MovablePuzzleState initialState = readInitialState();
 
         try {
-            MovablePuzzleState sol = ctrl.findSolution(initialState);
+            MovablePuzzleState sol = ctrl.getSolution(initialState);
             System.out.println(sol);
             System.out.println("Found solution: ");
             List<MovablePuzzleState.Step> steps = sol.getSteps();
