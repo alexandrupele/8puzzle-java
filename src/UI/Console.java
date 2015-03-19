@@ -3,6 +3,7 @@ package UI;
 import java.util.List;
 import java.util.Scanner;
 import Controller.*;
+import Domain.PuzzleStateUnsolvable;
 import Domain.MovablePuzzleState;
 import Domain.PuzzleStateNoBlankPosition;
 
@@ -17,7 +18,7 @@ public class Console {
         this.ctrl = ctrl;
     }
 
-    private MovablePuzzleState readInitialState() {
+    private MovablePuzzleState readInitialState() throws ConsoleCorruptReading {
         Scanner scan = new Scanner(System.in);
 
         System.out.print("Enter puzzle order: ");
@@ -26,16 +27,16 @@ public class Console {
             String orderString = scan.nextLine();
             n = Integer.parseInt(orderString);
         } catch (NumberFormatException e) {
-            System.out.println("Order must be integer!");
-            return null;
+            scan.close();
+            throw new ConsoleCorruptReading("Order must be integer");
         }
 
         int[][] arrayPuzzle;
         try {
             arrayPuzzle = new int[n][n];
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Order can be two, three or four!");
-            return null;
+            scan.close();
+            throw new ConsoleCorruptReading("Order must pe positive");
         }
 
         for (int i = 0; i < n; i++) {
@@ -45,32 +46,35 @@ public class Console {
                     String puzzleSlotString = scan.nextLine();
                     arrayPuzzle[i][j] = Integer.parseInt(puzzleSlotString);
                 } catch (NumberFormatException e) {
-                    System.out.println("Only integers are accepted!");
+                    scan.close();
+                    throw new ConsoleCorruptReading("Only integers are accepted!");
                 }
             }
         }
-
         scan.close();
-        return new MovablePuzzleState(arrayPuzzle);
+
+        MovablePuzzleState initialState;
+        try {
+            initialState = new MovablePuzzleState(arrayPuzzle);
+        } catch (PuzzleStateNoBlankPosition e) {
+            throw new ConsoleCorruptReading("Use zero for blank");
+        }
+
+        return initialState;
     }
 
     public void run() {
-        MovablePuzzleState initialState = readInitialState();
-
         try {
-            MovablePuzzleState sol = ctrl.getSolution(initialState);
-            System.out.println(sol);
-            System.out.println("Found solution: ");
+            MovablePuzzleState sol = ctrl.getSolution(readInitialState());
+
             List<MovablePuzzleState.Step> steps = sol.getSteps();
             System.out.println("Need " + steps.size() + " moves...");
-            for (MovablePuzzleState.Step step : steps)
-                System.out.print(step.name() + " ");
 
-        } catch (PuzzleStateNoBlankPosition e) {
-            System.out.println(e.getMessage());
-        } catch (ControllerUnsolvableState e) {
+            for (MovablePuzzleState.Step step : steps) {
+                System.out.print(step.name() + " ");
+            }
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
     }
 }

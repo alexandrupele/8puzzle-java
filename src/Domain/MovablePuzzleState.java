@@ -1,6 +1,7 @@
 package Domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,13 +17,22 @@ import java.util.List;
 public class MovablePuzzleState extends PuzzleState {
 
     private int order;
+    private int[] blank;
     public static enum Step {UP, DOWN, LEFT, RIGHT};
     private List<Step> steps;
 
-    public MovablePuzzleState(int[][] state) {
+    /**
+     * Constructor will not allow creating an instance
+     * if there is no blank slot in the state
+     * @param state initial state of the puzzle
+     * @throws PuzzleStateNoBlankPosition
+     */
+    public MovablePuzzleState(int[][] state) throws PuzzleStateNoBlankPosition {
         super(state);
+        
         order = state.length;
         steps = new ArrayList<Step>();
+        blank = getBlankPosition();
     }
 
     /**
@@ -32,6 +42,7 @@ public class MovablePuzzleState extends PuzzleState {
      */
     public MovablePuzzleState(MovablePuzzleState other) {
         order = other.order;
+
         // Alloc new memory for non-primitive types
         state = new int[order][order];
         for (int i = 0; i < order; i++)
@@ -40,9 +51,10 @@ public class MovablePuzzleState extends PuzzleState {
 
         steps = new ArrayList<Step>();
         for(Step step : other.steps) {
-//            System.out.print(step.name() + " ");
             steps.add(step);
         }
+
+        blank = new int[] {other.blank[0], other.blank[1]};
     }
 
     /**
@@ -60,64 +72,63 @@ public class MovablePuzzleState extends PuzzleState {
     }
 
     public MovablePuzzleState moveUp() throws PuzzleStateNoBlankPosition, PuzzleStateInvalidMove {
-        int[] pos = getBlankPosition();
-        if (pos[0] == 0) {
+        if (blank[0] == 0) {
             throw new PuzzleStateInvalidMove("Cannot move up any further");
         }
 
-        MovablePuzzleState cp = new MovablePuzzleState(this);
+        MovablePuzzleState clone = new MovablePuzzleState(this);
 
-        cp.state[pos[0]][pos[1]] = cp.state[pos[0] - 1][pos[1]];
-        cp.state[pos[0] - 1][pos[1]] = 0;
+        clone.state[blank[0]][blank[1]] = clone.state[blank[0] - 1][blank[1]];
+        clone.state[blank[0] - 1][blank[1]] = 0;
+        clone.blank[0]--;
+        clone.steps.add(Step.UP);
 
-        cp.steps.add(Step.UP);
-        return cp;
+        return clone;
     }
 
     public MovablePuzzleState moveDown() throws PuzzleStateNoBlankPosition, PuzzleStateInvalidMove {
-        int[] pos = getBlankPosition();
-        if (pos[0] == order - 1) {
+        if (blank[0] == order - 1) {
             throw new PuzzleStateInvalidMove("Cannot move down any further");
         }
 
-        MovablePuzzleState cp = new MovablePuzzleState(this);
+        MovablePuzzleState clone = new MovablePuzzleState(this);
 
-        cp.state[pos[0]][pos[1]] = cp.state[pos[0] + 1][pos[1]];
-        cp.state[pos[0] + 1][pos[1]] = 0;
+        clone.state[blank[0]][blank[1]] = clone.state[blank[0] + 1][blank[1]];
+        clone.state[blank[0] + 1][blank[1]] = 0;
+        clone.blank[0]++;
+        clone.steps.add(Step.DOWN);
 
-        cp.steps.add(Step.DOWN);
-        return cp;
+        return clone;
     }
 
     public MovablePuzzleState moveLeft() throws PuzzleStateNoBlankPosition, PuzzleStateInvalidMove {
-        int[] pos = getBlankPosition();
-        if (pos[1] == 0) {
+        if (blank[1] == 0) {
             throw new PuzzleStateInvalidMove("Cannot move left any further");
         }
 
-        MovablePuzzleState cp = new MovablePuzzleState(this);
+        MovablePuzzleState clone = new MovablePuzzleState(this);
 
-        cp.state[pos[0]][pos[1]] = cp.state[pos[0]][pos[1] - 1];
-        cp.state[pos[0]][pos[1] - 1] = 0;
+        clone.state[blank[0]][blank[1]] = clone.state[blank[0]][blank[1] - 1];
+        clone.state[blank[0]][blank[1] - 1] = 0;
+        clone.blank[1]--;
+        clone.steps.add(Step.LEFT);
 
-        cp.steps.add(Step.LEFT);
-        return cp;
+        return clone;
     }
 
     public MovablePuzzleState moveRight() throws PuzzleStateNoBlankPosition, PuzzleStateInvalidMove {
-        int[] pos = getBlankPosition();
-        if (pos[1] == order - 1) {
+        if (blank[1] == order - 1) {
             throw new PuzzleStateInvalidMove("Cannot move down any further");
         }
 
-        MovablePuzzleState cp = new MovablePuzzleState(this);
+        MovablePuzzleState clone = new MovablePuzzleState(this);
 
-        cp.state[pos[0]][pos[1]] = cp.state[pos[0]][pos[1] + 1];
-        cp.state[pos[0]][pos[1] + 1] = 0;
+        clone.state[blank[0]][blank[1]] = clone.state[blank[0]][blank[1] + 1];
+        clone.state[blank[0]][blank[1] + 1] = 0;
+        clone.blank[1]++;
+        clone.steps.add(Step.RIGHT);
 
-
-        cp.steps.add(Step.RIGHT);
-        return cp;
+        return clone;
     }
 
     public List<MovablePuzzleState> expandState() throws PuzzleStateNoBlankPosition {
@@ -143,6 +154,7 @@ public class MovablePuzzleState extends PuzzleState {
     }
 
     public boolean isSolution() {
+        // TODO: find better way of testing
         int maxPos = order - 1;
 
         if (state[0][0] != 0 && state[maxPos][maxPos] != 0) {
@@ -180,16 +192,7 @@ public class MovablePuzzleState extends PuzzleState {
     }
 
     public List<Step> getSteps() {
-        return steps;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
+        // Do not return the actual list. A copy is safer
+        return new ArrayList<Step>(steps);
     }
 }

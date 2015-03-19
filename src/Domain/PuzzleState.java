@@ -1,5 +1,7 @@
 package Domain;
 
+import java.util.Arrays;
+
 /**
  * Created by Alexandru Pele on 3/17/2015.
  */
@@ -38,7 +40,11 @@ public class PuzzleState {
             }
             sb.append(System.getProperty("line.separator"));
         }
-
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(state);
     }
 }
