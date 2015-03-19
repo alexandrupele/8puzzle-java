@@ -1,0 +1,6 @@
+# no ide files
+*.iml
+.idea
+
+# no compiled code
+out
