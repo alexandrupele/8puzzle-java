@@ -1,10 +1,9 @@
-package UI;
+package UI.Console;
 
 import java.util.List;
 import java.util.Scanner;
 import Controller.*;
-import Domain.PuzzleStateUnsolvable;
-import Domain.MovablePuzzleState;
+import Domain.MutablePuzzleState;
 import Domain.PuzzleStateNoBlankPosition;
 
 /**
@@ -18,7 +17,7 @@ public class Console {
         this.ctrl = ctrl;
     }
 
-    private MovablePuzzleState readInitialState() throws ConsoleCorruptReading {
+    private MutablePuzzleState readInitialState() throws ConsoleCorruptReading {
         Scanner scan = new Scanner(System.in);
 
         System.out.print("Enter puzzle order: ");
@@ -53,11 +52,11 @@ public class Console {
         }
         scan.close();
 
-        MovablePuzzleState initialState;
+        MutablePuzzleState initialState;
         try {
-            initialState = new MovablePuzzleState(arrayPuzzle);
+            initialState = new MutablePuzzleState(arrayPuzzle);
         } catch (PuzzleStateNoBlankPosition e) {
-            throw new ConsoleCorruptReading("Use zero for blank");
+            throw new ConsoleCorruptReading("Error reading the initial state");
         }
 
         return initialState;
@@ -65,12 +64,15 @@ public class Console {
 
     public void run() {
         try {
-            MovablePuzzleState sol = ctrl.getSolution(readInitialState());
+            long startTime = System.currentTimeMillis();
+            MutablePuzzleState sol = ctrl.getSolution(readInitialState());
+            long endTime = System.currentTimeMillis();
 
-            List<MovablePuzzleState.Step> steps = sol.getSteps();
+            System.out.println("Running time " + (endTime - startTime) + "ms");
+
+            List<MutablePuzzleState.Step> steps = sol.getSteps();
             System.out.println("Need " + steps.size() + " moves...");
-
-            for (MovablePuzzleState.Step step : steps) {
+            for (MutablePuzzleState.Step step : steps) {
                 System.out.print(step.name() + " ");
             }
         } catch (Exception e) {

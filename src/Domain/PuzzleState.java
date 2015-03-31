@@ -47,4 +47,8 @@ public class PuzzleState {
     public int hashCode() {
         return Arrays.deepHashCode(state);
     }
+
+    public int[][] getState() {
+        return state;
+    }
 }

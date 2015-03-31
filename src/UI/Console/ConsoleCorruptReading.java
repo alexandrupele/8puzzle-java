@@ -1,4 +1,4 @@
-package UI;
+package UI.Console;
 
 /**
  * Created by Alexandru Pele on 3/19/2015.

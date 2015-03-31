@@ -1,9 +1,8 @@
 package Controller;
 
-import Domain.PuzzleStateUnsolvable;
-import Domain.PuzzleState;
-import Domain.MovablePuzzleState;
-import Domain.PuzzleStateNoBlankPosition;
+import Algorithms.SearchAlgorithm;
+import Algorithms.SearchFailedException;
+import Domain.*;
 
 import java.util.*;
 
@@ -12,36 +11,60 @@ import java.util.*;
  */
 public class Controller {
 
-    Queue<MovablePuzzleState> queue;
-    Set<PuzzleState> blackList;
+    SearchAlgorithm algo;
 
-    public Controller() {
-        queue = new LinkedList<MovablePuzzleState>();
-        blackList = new HashSet<PuzzleState>(1000);
+    public Controller(SearchAlgorithm algo) {
+        this.algo = algo;
     }
 
-    public MovablePuzzleState getSolution(MovablePuzzleState initialState) throws PuzzleStateNoBlankPosition, PuzzleStateUnsolvable {
-        queue.add(initialState);
-
-        while (true) {
-            if (queue.isEmpty()) {
-                throw new PuzzleStateUnsolvable("There are no solutions for this configuration");
-            }
-            MovablePuzzleState current = queue.remove();
-            if (current.isSolution()) {
-                return current;
-            }
-            blackList.add(current);
-            if(blackList.size() % 5000 == 0) {
-                // Logging visited and to be visited
-                System.out.println(blackList.size() + "/" + queue.size() );
-            }
-            List<MovablePuzzleState> expanded = current.expandState();
-            for (MovablePuzzleState expandedState : expanded) {
-                if (!blackList.contains(expandedState)) {
-                    queue.add(expandedState);
-                }
-            }
+    public MutablePuzzleState getSolution(MutablePuzzleState initialState) throws PuzzleStateNoBlankPosition, PuzzleStateUnsolvable {
+        try {
+            return algo.getFinalState(initialState);
+        } catch (SearchFailedException ex) {
+            throw new PuzzleStateUnsolvable("There are no solutions for this configuration");
         }
+    }
+
+    public MutablePuzzleState getScrabbledState() {
+        MutablePuzzleState state;
+        try {
+            state = new MutablePuzzleState(new int[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 0}});
+        } catch (PuzzleStateNoBlankPosition ex) {
+            return null;
+        }
+
+        List<MutablePuzzleState.Step> steps = new ArrayList<MutablePuzzleState.Step>();
+
+        steps.add(MutablePuzzleState.Step.DOWN);
+        steps.add(MutablePuzzleState.Step.UP);
+        steps.add(MutablePuzzleState.Step.LEFT);
+        steps.add(MutablePuzzleState.Step.RIGHT);
+
+        int i = 0;
+        Random r = new Random(System.currentTimeMillis());
+
+        while (i < 30) {
+            MutablePuzzleState.Step step = steps.get(r.nextInt(4));
+            try {
+                switch (step) {
+                    case DOWN:
+                        state = state.moveDown();
+                        break;
+                    case UP:
+                        state = state.moveUp();
+                        break;
+                    case LEFT:
+                        state = state.moveLeft();
+                        break;
+                    case RIGHT:
+                        state = state.moveRight();
+                        break;
+                }
+                i++;
+            } catch (MutablePuzzleStateInvalidMove ex) { }
+        }
+
+        state.clearSteps();
+        return state;
     }
 }
