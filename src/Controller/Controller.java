@@ -28,7 +28,7 @@ public class Controller {
     public MutablePuzzleState getScrambledState() {
         MutablePuzzleState state;
         try {
-            state = new MutablePuzzleState(new int[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 0}});
+            state = new MutablePuzzleState(new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0}});
         } catch (PuzzleStateNoBlankPosition ex) {
             return null;
         }
