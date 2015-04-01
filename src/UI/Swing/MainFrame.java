@@ -15,6 +15,7 @@ public class MainFrame extends JFrame {
 
     private ToolsPane bar;
     private PuzzlePane puzzle;
+    private NavigationBar menuBar;
     private Controller ctrl;
     private JTextArea solutionArea;
     private JScrollPane solutionScroll;
@@ -37,10 +38,13 @@ public class MainFrame extends JFrame {
 
                     List<Step> steps = ctrl.getSolution(currentState).getSteps();
                     puzzle.addSteps(steps);
+
+                    // print the soluton as text
                     solutionArea.setText(steps.size() + " moves" + System.getProperty("line.separator"));
-                    for (Step s : steps)
+                    for (Step s : steps) {
                         solutionArea.append(s.toString() + " ");
-                    solutionScroll.setAutoscrolls(false);
+                    }
+                    solutionArea.setCaretPosition(0);
                     solutionScroll.revalidate();
                 } catch (Exception ex) {
                 }
@@ -50,7 +54,6 @@ public class MainFrame extends JFrame {
                         puzzle.animateSolution();
                     }
                 });
-
             }
         });
 
@@ -67,6 +70,7 @@ public class MainFrame extends JFrame {
 
         // Configure solution JTextArea
         solutionArea = new JTextArea(3, 20);
+        solutionArea.setText("PRESS SOLVE TO GET A SOLUTION...");
         solutionArea.setBackground(new Color(0x6BE373));
         solutionArea.setForeground(Color.WHITE);
         solutionArea.setFont(new Font("Verdana", Font.BOLD, 11));
@@ -75,9 +79,7 @@ public class MainFrame extends JFrame {
         solutionScroll = new JScrollPane(solutionArea);
 
         // Configure JMenuBar
-        JMenuBar menuBar = new JMenuBar();
-        JMenu files = new JMenu("Files");
-        menuBar.add(files);
+        menuBar = new NavigationBar();
 
         // Add components to the panel
         setJMenuBar(menuBar);

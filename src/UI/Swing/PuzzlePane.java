@@ -79,7 +79,7 @@ public class PuzzlePane extends JLayeredPane {
         while (tile.getY() != destination) {
             try {
                 Thread.sleep(TIME_INTERVAL);
-            } catch (InterruptedException ex) {}
+            } catch (InterruptedException ex) { }
             tile.setLocation(tile.getX(), tile.getY() - TILE_SPEED);
             paintImmediately(0, 0, getWidth(), getHeight());
         }
@@ -92,7 +92,7 @@ public class PuzzlePane extends JLayeredPane {
         while (tile.getY() != destination) {
             try {
                 Thread.sleep(TIME_INTERVAL);
-            } catch (InterruptedException ex) {}
+            } catch (InterruptedException ex) { }
 
             tile.setLocation(tile.getX(), tile.getY() + TILE_SPEED);
             paintImmediately(0, 0, getWidth(), getHeight());
@@ -120,7 +120,7 @@ public class PuzzlePane extends JLayeredPane {
         while (tile.getX() != destination) {
             try {
                 Thread.sleep(TIME_INTERVAL);
-            } catch (InterruptedException ex) {}
+            } catch (InterruptedException ex) { }
             tile.setLocation(tile.getX() + TILE_SPEED, tile.getY());
             paintImmediately(0, 0, getWidth(), getHeight());
         }
