@@ -20,9 +20,16 @@ public class BreadthFirstSearch extends SearchAlgorithm {
         queue = new LinkedList<MutablePuzzleState>();
         visited = new HashSet<PuzzleState>(1000);
     }
+    
+    private void initSearch() {
+    	// Needed when searching more than once
+        queue.clear();
+        visited.clear();
+    }
 
     public MutablePuzzleState getFinalState (MutablePuzzleState initialState) throws SearchFailedException {
-        queue.add(initialState);
+    	initSearch();
+    	queue.add(initialState);
 
         while (!queue.isEmpty()) {
             MutablePuzzleState current = queue.remove();

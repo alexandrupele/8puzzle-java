@@ -2,15 +2,17 @@ package UI.Swing;
 
 import Controller.Controller;
 import Domain.MutablePuzzleState;
+import Domain.MutablePuzzleState.Step;
 
 import javax.swing.*;
+import java.util.List;
 import java.awt.*;
 
 /**
  * Created by Alexandru Pele on 3/31/2015.
  */
 public class MainFrame extends JFrame {
-	// Comment for git
+
     private ToolsPane bar;
     private PuzzlePane puzzle;
     private Controller ctrl;
@@ -35,7 +37,9 @@ public class MainFrame extends JFrame {
             public void solutionRequested() {
                 // ask ctrl for solution
                 try {
-                    puzzle.addSteps(ctrl.getSolution(puzzle.getState()).getSteps());
+                	List<Step> steps = ctrl.getSolution(puzzle.getState()).getSteps();
+                    puzzle.addSteps(steps);
+                    
                 } catch (Exception ex) {
                 }
                 puzzle.animateSolution();
@@ -53,6 +57,7 @@ public class MainFrame extends JFrame {
 
         add(puzzle, BorderLayout.WEST);
         add(bar, BorderLayout.EAST);
+        
         pack();
     }
 
