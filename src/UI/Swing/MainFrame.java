@@ -10,7 +10,7 @@ import java.awt.*;
  * Created by Alexandru Pele on 3/31/2015.
  */
 public class MainFrame extends JFrame {
-
+	// Comment for git
     private ToolsPane bar;
     private PuzzlePane puzzle;
     private Controller ctrl;
