@@ -13,9 +13,13 @@ import java.util.List;
 public class ToolsPane extends JPanel {
 
     private JButton solveButton;
-    private JButton scrabbleButton;
+    private JButton scrambleButton;
+    private JComboBox diffCombo;
+    private JTextArea soltionArea;
+
     private List<SolveListener> solveListeners;
-    private List<ScrabbleListener> scrabbleListeners;
+    private List<ScrambleListener> scrambleListeners;
+
     
     private void addActionListeners() {
         solveButton.addActionListener(new ActionListener() {
@@ -24,13 +28,13 @@ public class ToolsPane extends JPanel {
                 for (SolveListener listner : solveListeners)
                     listner.solutionRequested();
             }
-        });  
-        
-        scrabbleButton.addActionListener(new ActionListener() {
+        });
+
+        scrambleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (ScrabbleListener listener : scrabbleListeners) {
-                    listener.scrabbleRequested();
+                for (ScrambleListener listener : scrambleListeners) {
+                    listener.scrambleRequested();
                 }
             }
         });        
@@ -38,23 +42,45 @@ public class ToolsPane extends JPanel {
 
     private void configurePane() {
     	setLayout(new GridBagLayout());
-    	
+        setPreferredSize(new Dimension(210, getHeight()));
+
     	GridBagConstraints gc = new GridBagConstraints();
-    	gc.weightx = 1;
-    	gc.weighty = 1;
-    	
+
+        gc.weightx = 0.05;
+        gc.weighty = 0.05;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+
+        // First line
+        gc.gridy = 0;
     	gc.gridx = 0;
-    	gc.gridy = 0;
-    	
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.insets = new Insets(5, 10, 5, 10);
         solveButton = new JButton("Solve");
         add(solveButton, gc);
 
+        // Second line
+        gc.gridy++;
+        gc.weightx = 0.5;
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        add(new JLabel("Difficulty: "), gc);
+
+        // Third lane
+        gc.gridy++;
         gc.gridx = 0;
-        gc.gridy = 1;
-        
-        scrabbleButton = new JButton("Scrabble");
-        add(scrabbleButton, gc);
-        
+        gc.insets = new Insets(1, 10, 5, 10);
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        diffCombo = new JComboBox(new String[] {"Easy", "Medium", "Hard"});
+        add(diffCombo, gc);
+
+        // Fourth line
+        gc.gridy++;
+        gc.gridx = 0;
+        gc.weighty = 1;
+        gc.insets = new Insets(5, 10, 5, 10);
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        scrambleButton = new JButton("Scramble");
+        add(scrambleButton, gc);
+
         addActionListeners();
     }
 
@@ -62,14 +88,14 @@ public class ToolsPane extends JPanel {
         solveListeners.add(listener);
     }
 
-    public void addScrabbleListener(ScrabbleListener listener) {
-        scrabbleListeners.add(listener);
+    public void addScrambleListener(ScrambleListener listener) {
+        scrambleListeners.add(listener);
     }
 
     public ToolsPane() {
         super();
         solveListeners = new ArrayList<SolveListener>();
-        scrabbleListeners = new ArrayList<ScrabbleListener>();
+        scrambleListeners = new ArrayList<ScrambleListener>();
         configurePane();
     }
 }

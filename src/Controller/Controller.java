@@ -25,7 +25,7 @@ public class Controller {
         }
     }
 
-    public MutablePuzzleState getScrabbledState() {
+    public MutablePuzzleState getScrambledState() {
         MutablePuzzleState state;
         try {
             state = new MutablePuzzleState(new int[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 0}});
@@ -43,7 +43,7 @@ public class Controller {
         int i = 0;
         Random r = new Random(System.currentTimeMillis());
 
-        while (i < 30) {
+        while (i < 50) {
             MutablePuzzleState.Step step = steps.get(r.nextInt(4));
             try {
                 switch (step) {

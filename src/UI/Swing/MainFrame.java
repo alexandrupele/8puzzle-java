@@ -16,20 +16,15 @@ public class MainFrame extends JFrame {
     private ToolsPane bar;
     private PuzzlePane puzzle;
     private Controller ctrl;
+    private JTextArea solutionArea;
+    private JScrollPane solutionScroll;
 
     public void configureFrame() {
         setTitle("Puzzle Solver");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setResizable(false);
 
-        // Configure JMenuBar
-        JMenuBar menuBar = new JMenuBar();
-        JMenu files = new JMenu("Files");
-        menuBar.add(files);
-
-        setJMenuBar(menuBar);
-
-        puzzle = new PuzzlePane(ctrl.getScrabbledState());
 
         bar = new ToolsPane();
         bar.addSolveListener(new SolveListener() {
@@ -37,27 +32,59 @@ public class MainFrame extends JFrame {
             public void solutionRequested() {
                 // ask ctrl for solution
                 try {
-                	List<Step> steps = ctrl.getSolution(puzzle.getState()).getSteps();
+                    MutablePuzzleState currentState = puzzle.getState();
+                    currentState.clearSteps();
+
+                    List<Step> steps = ctrl.getSolution(currentState).getSteps();
                     puzzle.addSteps(steps);
-                    
+                    solutionArea.setText(steps.size() + " moves" + System.getProperty("line.separator"));
+                    for (Step s : steps)
+                        solutionArea.append(s.toString() + " ");
+                    solutionScroll.setAutoscrolls(false);
+                    solutionScroll.revalidate();
                 } catch (Exception ex) {
                 }
-                puzzle.animateSolution();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        puzzle.animateSolution();
+                    }
+                });
+
             }
         });
 
-        bar.addScrabbleListener(new ScrabbleListener() {
+        bar.addScrambleListener(new ScrambleListener() {
             @Override
-            public void scrabbleRequested() {
+            public void scrambleRequested() {
                 // ask ctrl for a scrabbled puzzle
-                MutablePuzzleState newState = ctrl.getScrabbledState();
+                MutablePuzzleState newState = ctrl.getScrambledState();
                 puzzle.reloadPuzzle(newState);
             }
         });
 
+        puzzle = new PuzzlePane(ctrl.getScrambledState());
+
+        // Configure solution JTextArea
+        solutionArea = new JTextArea(3, 20);
+        solutionArea.setBackground(new Color(0x6BE373));
+        solutionArea.setForeground(Color.WHITE);
+        solutionArea.setFont(new Font("Verdana", Font.BOLD, 11));
+        solutionArea.setEditable(false);
+        solutionArea.setMargin(new Insets(11, 7, 7, 7));
+        solutionScroll = new JScrollPane(solutionArea);
+
+        // Configure JMenuBar
+        JMenuBar menuBar = new JMenuBar();
+        JMenu files = new JMenu("Files");
+        menuBar.add(files);
+
+        // Add components to the panel
+        setJMenuBar(menuBar);
         add(puzzle, BorderLayout.WEST);
         add(bar, BorderLayout.EAST);
-        
+        add(solutionScroll, BorderLayout.SOUTH);
+
         pack();
     }
 

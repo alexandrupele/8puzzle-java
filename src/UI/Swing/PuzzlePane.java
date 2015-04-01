@@ -5,6 +5,8 @@ import Domain.MutablePuzzleStateInvalidMove;
 import Domain.PuzzleStateNoBlankPosition;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -20,15 +22,17 @@ public class PuzzlePane extends JLayeredPane {
     private MutablePuzzleState state;
     private List<MutablePuzzleState.Step> steps;
 
-    private final int TILE_SIZE = 70;
+    private final int TILE_SIZE = 100;
     private final int TILE_SPEED = 1;
     private final int TILE_SPACING = 2;
-    private final int TIME_INTERVAL = 10;
+    private final int TIME_INTERVAL = 7;
 
     private JLabel createTile(int number) {
         JLabel tile = new JLabel(Integer.toString(number));
 
-        tile.setBackground(Color.WHITE);
+        tile.setBackground(new Color(0x1CAD25));
+        tile.setForeground(Color.white);
+        tile.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         tile.setHorizontalAlignment(JLabel.CENTER);
         tile.setVerticalAlignment(JLabel.CENTER);
         tile.setOpaque(true);
