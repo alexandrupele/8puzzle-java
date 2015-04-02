@@ -20,7 +20,13 @@ public class ToolsPane extends JPanel {
     private List<SolveListener> solveListeners;
     private List<ScrambleListener> scrambleListeners;
 
-    
+    public ToolsPane() {
+        super();
+        solveListeners = new ArrayList<SolveListener>();
+        scrambleListeners = new ArrayList<ScrambleListener>();
+        configurePane();
+    }
+
     private void addActionListeners() {
         solveButton.addActionListener(new ActionListener() {
             @Override
@@ -92,10 +98,7 @@ public class ToolsPane extends JPanel {
         scrambleListeners.add(listener);
     }
 
-    public ToolsPane() {
-        super();
-        solveListeners = new ArrayList<SolveListener>();
-        scrambleListeners = new ArrayList<ScrambleListener>();
-        configurePane();
+    public int getPrefferedDifficulty() {
+        return diffCombo.getSelectedIndex();
     }
 }

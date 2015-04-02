@@ -61,11 +61,13 @@ public class MainFrame extends JFrame {
             @Override
             public void scrambleRequested() {
                 // ask ctrl for a scrabbled puzzle
+                ctrl.setDifficulty(bar.getPrefferedDifficulty() + 1);
                 MutablePuzzleState newState = ctrl.getScrambledState();
                 puzzle.reloadPuzzle(newState);
             }
         });
 
+        ctrl.setDifficulty(bar.getPrefferedDifficulty() + 1);
         puzzle = new PuzzlePane(ctrl.getScrambledState());
 
         // Configure solution JTextArea

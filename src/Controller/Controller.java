@@ -11,10 +11,14 @@ import java.util.*;
  */
 public class Controller {
 
-    SearchAlgorithm algo;
+    private SearchAlgorithm algo;
 
-    public Controller(SearchAlgorithm algo) {
+    private int difficulty;
+    private int puzzleOrder;
+
+    public Controller(SearchAlgorithm algo, int puzzleOrder) {
         this.algo = algo;
+        this.puzzleOrder = puzzleOrder;
     }
 
     public MutablePuzzleState getSolution(MutablePuzzleState initialState) throws PuzzleStateNoBlankPosition, PuzzleStateUnsolvable {
@@ -28,7 +32,17 @@ public class Controller {
     public MutablePuzzleState getScrambledState() {
         MutablePuzzleState state;
         try {
-            state = new MutablePuzzleState(new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0}});
+            // Create default state
+            int current = 1;
+            int[][] stateArray = new int[puzzleOrder][puzzleOrder];
+            for (int i = 0; i < puzzleOrder - 1; i++)
+                for (int j = 0; j < puzzleOrder; j++)
+                    stateArray[i][j] = current++;
+            for (int j = 0; j < puzzleOrder - 1; j++)
+                stateArray[puzzleOrder - 1][j] = current++;
+            stateArray[puzzleOrder - 1][puzzleOrder - 1] = 0;
+
+            state = new MutablePuzzleState(stateArray);
         } catch (PuzzleStateNoBlankPosition ex) {
             return null;
         }
@@ -43,7 +57,7 @@ public class Controller {
         int i = 0;
         Random r = new Random(System.currentTimeMillis());
 
-        while (i < 50) {
+        while (i < difficulty * 10) {
             MutablePuzzleState.Step step = steps.get(r.nextInt(4));
             try {
                 switch (step) {
@@ -66,5 +80,9 @@ public class Controller {
 
         state.clearSteps();
         return state;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 }
